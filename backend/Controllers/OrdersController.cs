@@ -35,24 +35,32 @@ public sealed class OrdersController(OrdersDbContext db) : ControllerBase
         }
 
         await using var transaction = await db.Database.BeginTransactionAsync();
-        var order = new Order
+        try
         {
-            OrderNumber = $"PENDING-{Guid.NewGuid():N}",
-            SenderCity = request.SenderCity!.Trim(),
-            SenderAddress = request.SenderAddress!.Trim(),
-            RecipientCity = request.RecipientCity!.Trim(),
-            RecipientAddress = request.RecipientAddress!.Trim(),
-            Weight = request.Weight,
-            PickupDate = request.PickupDate,
-            CreatedAt = DateTime.UtcNow
-        };
+            var order = new Order
+            {
+                OrderNumber = $"PENDING-{Guid.NewGuid():N}",
+                SenderCity = request.SenderCity!.Trim(),
+                SenderAddress = request.SenderAddress!.Trim(),
+                RecipientCity = request.RecipientCity!.Trim(),
+                RecipientAddress = request.RecipientAddress!.Trim(),
+                Weight = request.Weight,
+                PickupDate = request.PickupDate,
+                CreatedAt = DateTime.UtcNow
+            };
 
-        db.Orders.Add(order);
-        await db.SaveChangesAsync();
-        order.OrderNumber = $"DLV-{order.Id:D6}";
-        await db.SaveChangesAsync();
-        await transaction.CommitAsync();
-        return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+            db.Orders.Add(order);
+            await db.SaveChangesAsync();
+            order.OrderNumber = $"DLV-{order.Id:D6}";
+            await db.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     private static bool IsValid(CreateOrderRequest request) =>
