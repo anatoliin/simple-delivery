@@ -8,6 +8,12 @@
 - Node.js 18+
 - npm
 
+## Структура проекта
+
+- `backend/` — ASP.NET Core API
+- `frontend/` — React + Vite приложение
+- `backend.Tests/` — xUnit тесты
+
 ## Запуск backend
 
 1. Откройте терминал в папке `backend`:
@@ -35,9 +41,3 @@
 ```bash
 dotnet test backend.Tests/backend.Tests.csproj --nologo
 ```
-
-## Структура проекта
-
-- `backend/` — ASP.NET Core API
-- `frontend/` — React + Vite приложение
-- `backend.Tests/` — xUnit тесты
