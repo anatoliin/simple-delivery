@@ -30,10 +30,9 @@
 
 ## Запуск тестов
 
-Или из корня решения:
+Из корня решения:
 
 ```bash
-cd C:\src\simple
 dotnet test backend.Tests/backend.Tests.csproj --nologo
 ```
 
